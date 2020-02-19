@@ -168,9 +168,9 @@ void BattleBoat::setVertical(bool vertical)
 
 bool BattleBoat::intersects(const BattleBoat& other) const
 {
-    if (this->isVertical())
+    if (this->isVertical()) //test case if "this" is vertical
     {
-        if (other.isVertical())
+        if (other.isVertical()) //test case if "other" is vertical
         {
             if (this->getStartX() == other.getStartX())
             {
@@ -180,13 +180,13 @@ bool BattleBoat::intersects(const BattleBoat& other) const
                     {
                         if ((this->getStartY() + i) == (other.getStartY() + j))
                         {
-                            return true;
+                            return true; //returns true if they intersect in any location
                         }
                     }
                 }
             }
         }
-        else
+        else //test case if "other" is not vertical
         {
             for (size_t i = 0; i < this->getLength(); ++i)
             {
@@ -196,16 +196,16 @@ bool BattleBoat::intersects(const BattleBoat& other) const
                     {
                         if ((this->getStartY() + i) == other.getStartY())
                         {
-                            return true;
+                            return true; //returns true if they intersect in any location
                         }
                     }
                 }
             }
         }
     }
-    else
+    else //test case if "this" is not vertical
     {
-        if (other.isVertical())
+        if (other.isVertical()) //test case if "other" is vertical
         {
             for (size_t i = 0; i < this->getLength(); ++i)
             {
@@ -215,13 +215,14 @@ bool BattleBoat::intersects(const BattleBoat& other) const
                     {
                         if (this->getStartY() == (other.getStartY() + j))
                         {
-                            return true;
+                            return true; //returns true if they intersect in any location
                         }
                     }
                 }
             }
         }
-        else {
+        else //test case if "other" is not vertical
+        {
             if (this->getStartY() == other.getStartY())
             {
                 for (size_t i = 0; i < this->getLength(); ++i)
@@ -230,14 +231,14 @@ bool BattleBoat::intersects(const BattleBoat& other) const
                     {
                         if ((this->getStartX() + i) == (other.getStartX() + j))
                         {
-                            return true;
+                            return true; //returns true if they intersect in any location
                         }
                     }
                 }
             }
         }
     }
-    return false;
+    return false; //returns false if the ships do not intersect in any location
 }
 
 bool BattleBoat::isHit(unsigned int x, unsigned int y) const
@@ -245,7 +246,7 @@ bool BattleBoat::isHit(unsigned int x, unsigned int y) const
     // TODO: Implement this function
     unsigned int distance;
 
-    if (this->isVertical())
+    if (this->isVertical()) //test case if "this" is vertical
     {
         if (this->getStartX() == x)
         {
@@ -254,13 +255,13 @@ bool BattleBoat::isHit(unsigned int x, unsigned int y) const
                 if ((this->getStartY() + i) == y)
                 {
                     distance = y - this->getStartY();
-                    return this->hits[distance];
+                    return this->hits[distance]; //returns true if the ship is hit at the location or false if the ship has not been hit at the location
                 }
             }
         }
     }
 
-    else
+    else //test case if "this" is not vertical
     {
         if (this->getStartY() == y)
         {
@@ -269,12 +270,12 @@ bool BattleBoat::isHit(unsigned int x, unsigned int y) const
                 if ((this->getStartX() + i) == x)
                 {
                     distance = x - this->getStartX();
-                    return this->hits[distance];
+                    return this->hits[distance]; //returns true if the ship is hit at the location or false if the ship has not been hit at the location
                 }
             }
         }
     }
-    return false;
+    return false; //returns false if the ship was not even hit in the first place
 }
 
 bool BattleBoat::isHitable(unsigned int x, unsigned int y) const
@@ -282,7 +283,7 @@ bool BattleBoat::isHitable(unsigned int x, unsigned int y) const
     // TODO: Implement this function
     unsigned int distance;
 
-    if (this->isVertical())
+    if (this->isVertical()) //test case if "this" is vertical
     {
         if (this->getStartX() == x)
         {
@@ -291,13 +292,13 @@ bool BattleBoat::isHitable(unsigned int x, unsigned int y) const
                 if ((this->getStartY() + i) == y)
                 {
                     distance = y - this->getStartY();
-                    return !this->hits[distance];
+                    return !this->hits[distance]; //returns false if the ship is hit at the location or true if the ship has not been hit at the location
                 }
             }
         }
     }
 
-    else
+    else //test case if "this" is not vertical
     {
         if (this->getStartY() == y)
         {
@@ -306,12 +307,12 @@ bool BattleBoat::isHitable(unsigned int x, unsigned int y) const
                 if ((this->getStartX() + i) == x)
                 {
                     distance = x - this->getStartX();
-                    return !this->hits[distance];
+                    return !this->hits[distance]; //returns false if the ship is hit at the location or true if the ship has not been hit at the location
                 }
             }
         }
     }
-    return false;
+    return false; //returns false if the ship was not even hit in the first place
 }
 
 void BattleBoat::hit(unsigned int x, unsigned int y)
@@ -319,19 +320,19 @@ void BattleBoat::hit(unsigned int x, unsigned int y)
     // TODO: Implement this function
     unsigned int distance;
 
-    if (this->isHitable(x, y))
+    if (this->isHitable(x, y)) //test if the ship is hitable in the first place
     {
-        if (this->isVertical())
+        if (this->isVertical()) //test case if "this" is vertical
         {
             distance = y - this->getStartY();
         }
         
-        else
+        else //test case if "this" is not vertical
         {
             distance = x - this->getStartX();
         }
 
-        this->hits[distance] = true;
+        this->hits[distance] = true; //change the hits array to true at the corresponding (x,y) coordinate
     }
 }
 
@@ -340,11 +341,11 @@ bool BattleBoat::isSunk() const
     // TODO: Implement this function
     unsigned int hitsCounted{ 0 };
 
-    for (size_t i = 0; i < this->getLength() && hits[i]; ++i)
+    for (size_t i = 0; i < this->getLength() && hits[i]; ++i) //count every hit in the hits array
     {
         hitsCounted++;
     }
-    if (hitsCounted == this->getLength()) { return true; }
+    if (hitsCounted == this->getLength()) { return true; } //return true if the hits counted does equal the length of the ship
 
-    return false;
+    return false; //return false if the hits counted does not equal the length of the ship
 }

@@ -9,7 +9,7 @@ BattleBoatBoard::BattleBoatBoard(unsigned int* boatLengths, unsigned int boatCou
 {
     // TODO: Write the constructor here.
     unsigned int randomInt;
-    unsigned int intersects;
+    unsigned int error;
 
     if (boatCount > 10) { boatCount = 10; } //verify boat count isn't over 10, and if it is set boat count to 10
 
@@ -28,37 +28,40 @@ BattleBoatBoard::BattleBoatBoard(unsigned int* boatLengths, unsigned int boatCou
         this->boats[i] = BattleBoat(boatLengths[i]);
     }
 
-    time_t seed; //forces rand to be different everytime
+    //forces rand to be different everytime
+    time_t seed; 
     time(&seed);
     srand(static_cast<unsigned int>(seed));
 
-    for (size_t i = 0; i < boatCount; ++i)
+    for (size_t i = 0; i < boatCount; ++i)  //iterates through every boat
     {
         do
         {
-            intersects = 0;
+            error = 0;
 
-            randomInt = rand() % 10;
+            //randomizes the start (x,y) coordinate and if the ship is vertical
+            randomInt = rand() % 10; 
             this->boats[i].setStartX(randomInt);
             randomInt = rand() % 10;
             this->boats[i].setStartY(randomInt);
             randomInt = rand() % 2;
             this->boats[i].setVertical(static_cast<bool>(randomInt));
 
-            for (size_t j = 0; j < i; ++j)
+            for (size_t j = 0; j < i; ++j) //test to make sure none of the boats intersect
             {
-                if (this->boats[i].intersects(this->boats[j])) { ++intersects;}
+                if (this->boats[i].intersects(this->boats[j])) { ++error;}
             }
 
-            if (this->boats[i].isVertical())
+            //tests to make sure the boats length do not go out of bounds
+            if (this->boats[i].isVertical()) //test case if "this" is vertical 
             {
-                if (this->boats[i].getStartY() + this->boats[i].getLength() > 9) { ++intersects; }
+                if (this->boats[i].getStartY() + this->boats[i].getLength() > 9) { ++error; }
             }
-            else
+            else //test case if "this" is not vertical
             {
-                if (this->boats[i].getStartX() + this->boats[i].getLength() > 9) { ++intersects; }
+                if (this->boats[i].getStartX() + this->boats[i].getLength() > 9) { ++error; }
             }
-        } while (intersects != 0);
+        } while (error != 0); //redo the boat if there is a possible error
         
     }
 }
@@ -68,7 +71,7 @@ const BattleBoat* BattleBoatBoard::getBoat(unsigned int x, unsigned int y) const
     // TODO: Return a pointer to a boat if one exists at the coordinates (x, y).
     for (size_t i = 0; i < this->boatCount; ++i) 
     {
-        if (this->boats[i].isVertical()) 
+        if (this->boats[i].isVertical()) //test case if "this" boat is vertical
         {
             if (this->boats[i].getStartX() == x)
             {
@@ -76,13 +79,13 @@ const BattleBoat* BattleBoatBoard::getBoat(unsigned int x, unsigned int y) const
                 {
                     if ((boats[i].getStartY() + j) == y)
                     {
-                        return &boats[i];
+                        return &boats[i]; //returns the boat pointer if a boat exists at the (x,y) coordinate
                     }
                 }
             }
         }
 
-        else
+        else //test case if "this" boat is not vertical
         {
             if (this->boats[i].getStartY() == y)
             {
@@ -90,13 +93,13 @@ const BattleBoat* BattleBoatBoard::getBoat(unsigned int x, unsigned int y) const
                 {
                     if ((boats[i].getStartX() + j) == x)
                     {
-                        return &boats[i];
+                        return &boats[i]; //returns the boat pointer if a boat exists at the (x,y) coordinate
                     }
                 }
             }
         }
     }
-    return nullptr;
+    return nullptr; //returns null pointer if a boat does not exists at the (x,y) coordinate
 }
 
 BattleBoat * BattleBoatBoard::getBoat(unsigned int x, unsigned int y)
@@ -104,7 +107,7 @@ BattleBoat * BattleBoatBoard::getBoat(unsigned int x, unsigned int y)
     // TODO: Return a pointer to a boat if one exists at the coordinates (x, y).
     for (size_t i = 0; i < this->boatCount; ++i) 
     {
-        if (this->boats[i].isVertical()) 
+        if (this->boats[i].isVertical()) //test case if "this" boat is vertical
         {
             if (this->boats[i].getStartX() == x)
             {
@@ -112,13 +115,13 @@ BattleBoat * BattleBoatBoard::getBoat(unsigned int x, unsigned int y)
                 {
                     if ((boats[i].getStartY() + j) == y)
                     {
-                        return &boats[i];
+                        return &boats[i]; //returns the boat pointer if a boat exists at the (x,y) coordinate
                     }
                 }
             }
         }
 
-        else
+        else //test case if "this" boat is not vertical
         {
             if (this->boats[i].getStartY() == y)
             {
@@ -126,11 +129,11 @@ BattleBoat * BattleBoatBoard::getBoat(unsigned int x, unsigned int y)
                 {
                     if ((boats[i].getStartX() + j) == x)
                     {
-                        return &boats[i];
+                        return &boats[i]; //returns the boat pointer if a boat exists at the (x,y) coordinate
                     }
                 }
             }
         }
     }
-    return nullptr;
+    return nullptr; //returns null pointer if a boat does not exists at the (x,y) coordinate
 }

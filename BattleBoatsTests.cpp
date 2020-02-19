@@ -864,9 +864,9 @@ int main()
     // Seed the random number generator
     srand(0); // Start with a deterministic seed
 
-    /*cout << "Running part 1 tests." << endl;*/
+    cout << "Running part 1 tests." << endl;
 
-    /*cout << "Testing intersects()." << endl;
+    cout << "Testing intersects()." << endl;
     testIntersects();
     cout << "Passed!" << endl;
 
@@ -874,19 +874,19 @@ int main()
     testBoards(&testBoardConstructor);
     cout << "Passed!" << endl;
 
-    cout << "All part 1 tests passed!" << endl << endl;*/
+    cout << "All part 1 tests passed!" << endl << endl;
 
-    /*cout << "Running part 2 tests." << endl;*/
+    cout << "Running part 2 tests." << endl;
 
-    /*cout << "Testing hit() and BattleBoat::isHit()." << endl;
+    cout << "Testing hit() and BattleBoat::isHit()." << endl;
     testHit();
     cout << "Passed!" << endl;
 
     cout << "Testing shot() and isRevealed()." << endl;
     testBoards(&testShot);
-    cout << "Passed!" << endl;*/
+    cout << "Passed!" << endl;
 
-    /*cout << "Testing isSunk()." << endl;
+    cout << "Testing isSunk()." << endl;
     testIsSunk();
     cout << "Passed!" << endl;
 
@@ -916,21 +916,21 @@ int main()
 
     cout << "Testing shot() on the same coordinates more than once." << endl;
     testBoards(&testRepeatShots);
-    cout << "Passed!" << endl;*/
+    cout << "Passed!" << endl;
 
-    //cout << "More random tests (may take a while)." << endl;
+    cout << "More random tests (may take a while)." << endl;
 
-    //// Time-based random seed
-    //time_t seed;
-    //time(&seed);
-    //srand(static_cast<unsigned int>(seed));
+    // Time-based random seed
+    time_t seed;
+    time(&seed);
+    srand(static_cast<unsigned int>(seed));
 
-    //for (unsigned int i = 0; i < 3; i++)
-    //{
-    //    testBoards(&testBoardConstructor);
-    //}
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        testBoards(&testBoardConstructor);
+    }
 
-    /*cout << "Passed!" << endl;*/
+    cout << "Passed!" << endl;
 
     cout << "Playing some random games (may take a while)." << endl;
 
