@@ -2,6 +2,7 @@
 #include <ctime>
 #include <cassert>
 #include <algorithm>
+#include <string>
 #include "BattleBoat.h"
 #include "BattleBoatBoard.h"
 #include "BattleBoatsGame.h"
@@ -857,9 +858,8 @@ void testRandomGame(unsigned int* lengths, unsigned int lengthCount)
     assert(game.getBoatsSunk() == game.getBoatCount());
 }
 
-// The main function that runs all the tests.
-// Comment this function out when you test your user interface.
-int main()
+// A function with all of the test functions
+void tests()
 {
     // Seed the random number generator
     srand(0); // Start with a deterministic seed
@@ -939,6 +939,313 @@ int main()
     cout << "Passed!" << endl;
 
     cout << "All part 3 tests passed!" << endl << endl;
+}
+
+// A function to create the board
+BattleBoatBoard* createBoard()
+{
+    unsigned int const MAX_BOAT_COUNT{ 10 };
+    unsigned int const MAX_TOTAL_LENGTH{ 20 };
+    unsigned int boatLengths[MAX_BOAT_COUNT] = { 0 };
+    unsigned int boatCount{ 0 };
+    unsigned int totalBoatLength{ 0 };
+    string failedUserInput;
+
+    cout << "Welcome to Battleboats!" << endl << endl;
+    cout << "Keep in mind these constrants..." << endl;
+    cout << "The boat count must be between 1 and 10." << endl;
+    cout << "The boat length must be between 1 and 6." << endl;
+    cout << "The input will be rounded down, i.e. 4.87 = 4." << endl;
+    cout << "The total length of all of the boats cannot exceed 20." << endl;
+    
+    do //loop until the user input is valid
+    {
+        cout << "How many boats do you want in the game?" << endl; //ask the user for the desired boat count
+        cin >> boatCount;
+        cin.ignore();
+        cout << endl;
+
+        if (cin.fail()) //clear cin if the input was invalid
+        {
+            cin.clear();
+            getline(cin, failedUserInput);
+            cout << "Error (Invalid Input): " << failedUserInput << endl << endl;
+        }
+
+        if (boatCount == 0 || boatCount > 10) //make sure the user has a boat count between 1 and 10
+        {
+            cout << "Invalid boat count." << endl << endl;
+        }
+
+    } while (boatCount == 0 || boatCount > 10);
+
+    cout << "What are the boat lengths?" << endl;
+
+    for (size_t i = 0; i < boatCount; ++i) //loop for every boat the user desired
+    {
+        do //loop until the user input is valid
+        {
+            cout << "Boat #" << i + 1 << " length:" << endl; //ask the user for the desired boat length
+            cin >> boatLengths[i];
+            cin.ignore();
+            cout << endl;
+
+            if (cin.fail()) //clear cin if the input was invalid
+            {
+                cin.clear();
+                getline(cin, failedUserInput);
+                cout << "Error (Invalid Input): " << failedUserInput << endl << endl;
+            }
+
+            if (boatLengths[i] == 0 || boatLengths[i] > 6) //make sure the user has a boat length between 1 and 6
+            {
+                cout << "Invalid boat length." << endl << endl;
+            }
+
+        } while (boatLengths[i] == 0 || boatLengths[i] > 6);
+
+        totalBoatLength += boatLengths[i]; //count the total boat length
+
+        if (totalBoatLength > MAX_TOTAL_LENGTH) //if the boat length is over 20 reset
+        {
+            i = -1;
+            totalBoatLength = 0;
+            cout << "Exceeded total boat length of 20." << endl << endl;
+        }
+
+
+    }
+
+    BattleBoatBoard* board = new BattleBoatBoard(boatLengths, boatCount);
+    return board;
+}
+
+// A function to play a game
+void playGame(BattleBoatBoard* board, bool debugMode)
+{
+    BattleBoatsGame game(*board);
+    unsigned int x;
+    unsigned int y;
+    string failedUserInput;
+    string userInput;
+    bool validatedUserInput{ false };
+
+    cout << "Keep in mind these constrants..." << endl;
+    cout << "The x and y values of the shot must be between 0 and 9." << endl << endl;
+    do //loop until the game is complete
+    {
+        if (debugMode) //print the location of the boats if the game is in debug mode
+        {
+            cout << "YOU ARE IN DEBUG MODE!!!" << endl << endl;
+            cout << *board << endl;
+        }
+
+        do //loop until the input is valid
+        {
+            cout << "What is the x coordinate you want to shoot at?" << endl; //ask the user for the deisred x coordinate
+            cin >> x;
+            cin.ignore();
+            cout << endl;
+
+            if (cin.fail()) //clear cin if the input was invalid
+            {
+                cin.clear();
+                getline(cin, failedUserInput);
+                cout << "Error (Invalid Input): " << failedUserInput << endl << endl;
+                x = 10;
+            }
+
+            if (x > 9) //tells the user the shot was out of bounds
+            {
+                cout << "Shot was out of bounds." << endl << endl;
+            }
+
+        } while (x > 9);
+
+        do //loop until the input is valid
+        {
+            cout << "What is the y coordinate you want to shoot at?" << endl; //ask the user for the deisred y coordinate
+            cin >> y;
+            cin.ignore();
+            cout << endl;
+
+            if (cin.fail()) //clear cin if the input was invalid
+            {
+                cin.clear();
+                getline(cin, failedUserInput);
+                cout << "Error (Invalid Input): " << failedUserInput << endl << endl;
+                y = 10;
+            }
+
+            if (y > 9) //tells the user the shot was out of bounds
+            {
+                cout << "Shot was out of bounds." << endl << endl;
+            }
+
+        } while (y > 9);
+
+        if (game.isRevealed(x, y)) //tells the user they already shot there
+        {
+            cout << "You have already shot at (" << x << ", " << y << ")." << endl << endl;
+        }
+        else //takes a shot at the desired location
+        {
+            if (game.shot(x, y)) //tells the user the shot was a hit
+            {
+                cout << "The shot at (" << x << ", " << y << ") was a hit!" << endl;
+            }
+            else //tells the user the shot was a miss
+            {
+                cout << "The shot at (" << x << ", " << y << ") was a miss." << endl;
+            }
+            cout << endl;
+        }
+
+        if (game.getBoatsSunk() != game.getBoatCount()) //if the game is not complete tell how many boats are left, the turn count, display the board, and ask if the user wants to quit
+        {
+            cout << "This is turn #" << game.getTurnCount() << endl;
+            cout << "There are " << game.getBoatCount() - game.getBoatsSunk() << " boats left." << endl << endl;
+            cout << game << endl;
+
+            do //loop until the input is valid
+            {
+                cout << "Do you want continue playing the game?" << endl << endl; //ask the user if they want to keep playing
+                cout << "Type 'Yes' if you want keep playing." << endl;
+                cout << "Type 'No' if you want to quit." << endl << endl;
+                getline(cin, userInput);
+
+                for (size_t i = 0; i < userInput.length(); ++i) //makes user input lower case
+                {
+                    userInput.at(i) = tolower(userInput.at(i));
+                }
+
+                cout << endl;
+
+                if (userInput == "no" || userInput == "yes") { validatedUserInput = true; }
+
+            } while(!validatedUserInput);
+
+            if (userInput == "no") //if the user wants to quit... tell how many boats are left, the turn count, and display the board
+            {
+                cout << "You quit on turn #" << game.getTurnCount() << endl;
+                cout << "There are " << game.getBoatCount() - game.getBoatsSunk() << " boats left." << endl << endl;
+                for (x = 0; x < 10; ++x)
+                {
+                    for (y = 0; y < 10; ++y)
+                    {
+                        game.shot(x, y);
+                    }
+                }
+                cout << game;
+            }
+        }
+        else //tell the user the turn count and display the board
+        {
+            cout << "You finished the game on turn #" << game.getTurnCount() << endl << endl;
+            for (x = 0; x < 10; ++x) //cleans the board up
+            {
+                for (y = 0; y < 10; ++y)
+                {
+                    game.shot(x, y);
+                }
+            }
+            cout << game;
+        }
+
+    } while (game.getBoatsSunk() != game.getBoatCount());
+}
+
+// A function to hold all of the required functions to play the game
+void game()
+{
+    string userInput;
+    bool validatedUserInput{ false };
+    bool debugMode;
+    do
+    {
+        BattleBoatBoard* board = createBoard();
+        debugMode = false;
+
+        do //loop until the input is valid
+        {
+            cout << "Do you want to enter debug mode?" << endl << endl; //ask the user if they want to enter debug mode
+            cout << "Type 'Yes' if you want to enter debug mode." << endl;
+            cout << "Type 'No' if you do not want to enter debug mode." << endl << endl;
+            getline(cin, userInput);
+
+            for (size_t i = 0; i < userInput.length(); ++i) //makes user input lower case
+            {
+                userInput.at(i) = tolower(userInput.at(i));
+            }
+
+            cout << endl;
+
+            if (userInput == "no" || userInput == "yes") { validatedUserInput = true; }
+
+        } while (!validatedUserInput);
+
+        if (userInput == "yes") //turn debug to true
+        {
+            debugMode = true;
+        }
+
+        playGame(board, debugMode);
+        delete board;
+
+        validatedUserInput = false; //reset validUserInput
+        userInput = "null"; //reset userInput
+
+        do //loop until the input is valid
+        {
+            cout << "Do you want to play BattleBoats again?" << endl << endl; //ask the user if they want to play BattleBoats again
+            cout << "Type 'Yes' if you want to play BattleBoats again." << endl;
+            cout << "Type 'No' if you want to quit." << endl << endl;
+            getline(cin, userInput);
+
+            for (size_t i = 0; i < userInput.length(); ++i) //makes user input lower case
+            {
+                userInput.at(i) = tolower(userInput.at(i));
+            }
+
+            cout << endl;
+
+            if (userInput == "no" || userInput == "yes") { validatedUserInput = true; }
+
+        } while (!validatedUserInput);
+
+        if (userInput == "no") //if the user wants to quit, close the program
+        {
+            cout << "Have a nice day!" << endl;
+        }
+    } while (userInput == "yes");
+}
+
+// The main function that runs all the tests.
+// Comment this function out when you test your user interface.
+int main()
+{
+    string userInput;
+    bool validatedUserInput{ false };
+    do
+    {
+        cout << "Do you want to test the game or play the game?" << endl << endl;
+        cout << "Type 'Test' if you want to run the tests." << endl;
+        cout << "Type 'Play' if you want to play the game." << endl << endl;
+        getline(cin, userInput);
+
+        for (size_t i = 0; i < userInput.length(); ++i) //makes user input lower case
+        {
+            userInput.at(i) = tolower(userInput.at(i));
+        }
+
+        cout << endl;
+
+        if (userInput == "test" || userInput == "play") { validatedUserInput = true; }
+
+    } while (!validatedUserInput);
+
+    if (userInput == "test") { tests(); }
+    else { game(); }
 
     return 0;
 }
